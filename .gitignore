@@ -7,6 +7,7 @@ WadaSNR/
 __pycache__/
 *.py[cod]
 *$py.class
+dataset
 
 # C extensions
 *.so

@@ -7,6 +7,7 @@ from typing import List
 
 from tqdm import tqdm
 
+
 ########################
 # DATASETS
 ########################
@@ -114,10 +115,10 @@ def ljspeech(root_path, meta_file, **kwargs):  # pylint: disable=unused-argument
     txt_file = os.path.join(root_path, meta_file)
     items = []
     speaker_name = "ljspeech"
-    with open(txt_file, "r", encoding="utf-8") as ttf:
+    with open(txt_file, "r", encoding="utf-8-sig") as ttf:
         for line in ttf:
             cols = line.split("|")
-            wav_file = os.path.join(root_path, "wavs", cols[0] + ".wav")
+            wav_file = os.path.join(root_path, "wavs", cols[0].strip() + ".wav")
             text = cols[2]
             items.append([text, wav_file, speaker_name])
     return items
@@ -128,10 +129,10 @@ def ljspeech_test(root_path, meta_file, **kwargs):  # pylint: disable=unused-arg
     https://keithito.com/LJ-Speech-Dataset/"""
     txt_file = os.path.join(root_path, meta_file)
     items = []
-    with open(txt_file, "r", encoding="utf-8") as ttf:
+    with open(txt_file, "r", encoding="utf-8-sig") as ttf:
         for idx, line in enumerate(ttf):
             cols = line.split("|")
-            wav_file = os.path.join(root_path, "wavs", cols[0] + ".wav")
+            wav_file = os.path.join(root_path, "wavs", cols[0].strip() + ".wav")
             text = cols[2]
             items.append([text, wav_file, f"ljspeech-{idx}"])
     return items
@@ -191,7 +192,7 @@ def nancy(root_path, meta_file, **kwargs):  # pylint: disable=unused-argument
     with open(txt_file, "r", encoding="utf-8") as ttf:
         for line in ttf:
             utt_id = line.split()[1]
-            text = line[line.find('"') + 1 : line.rfind('"') - 1]
+            text = line[line.find('"') + 1: line.rfind('"') - 1]
             wav_file = os.path.join(root_path, "wavn", utt_id + ".wav")
             items.append([text, wav_file, speaker_name])
     return items
@@ -288,7 +289,7 @@ def brspeech(root_path, meta_file, ignored_speakers=None):
 def vctk(root_path, meta_files=None, wavs_path="wav48", ignored_speakers=None):
     """homepages.inf.ed.ac.uk/jyamagis/release/VCTK-Corpus.tar.gz"""
     items = []
-    meta_files = glob(f"{os.path.join(root_path,'txt')}/**/*.txt", recursive=True)
+    meta_files = glob(f"{os.path.join(root_path, 'txt')}/**/*.txt", recursive=True)
     for meta_file in meta_files:
         _, speaker_id, txt_file = os.path.relpath(meta_file, root_path).split(os.sep)
         file_id = txt_file.split(".")[0]
@@ -307,7 +308,7 @@ def vctk(root_path, meta_files=None, wavs_path="wav48", ignored_speakers=None):
 def vctk_slim(root_path, meta_files=None, wavs_path="wav48", ignored_speakers=None):  # pylint: disable=unused-argument
     """homepages.inf.ed.ac.uk/jyamagis/release/VCTK-Corpus.tar.gz"""
     items = []
-    txt_files = glob(f"{os.path.join(root_path,'txt')}/**/*.txt", recursive=True)
+    txt_files = glob(f"{os.path.join(root_path, 'txt')}/**/*.txt", recursive=True)
     for text_file in txt_files:
         _, speaker_id, txt_file = os.path.relpath(text_file, root_path).split(os.sep)
         file_id = txt_file.split(".")[0]
@@ -370,9 +371,9 @@ def _voxcel_x(root_path, meta_file, voxcel_idx):
         meta_data = []
         wav_files = voxceleb_path.rglob("**/*.wav")
         for path in tqdm(
-            wav_files,
-            desc=f"Building VoxCeleb {voxcel_idx} Meta file ... this needs to be done only once.",
-            total=expected_count,
+                wav_files,
+                desc=f"Building VoxCeleb {voxcel_idx} Meta file ... this needs to be done only once.",
+                total=expected_count,
         ):
             speaker_id = str(Path(path).parent.parent.stem)
             assert speaker_id.startswith("id")
